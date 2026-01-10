@@ -1,6 +1,21 @@
 <nav>
-  <a routerLink="/" routerLinkActive="active">Home</a>
-  <a routerLink="/blogs" routerLinkActive="active">Blogs</a>
-  <a routerLink="/login" routerLinkActive="active">Login</a>
-  <a routerLink="/register" routerLinkActive="active">Register</a>
+  <div class="nav-brand">
+    <a routerLink="/">DevBlog</a>
+  </div>
+  
+  <div class="nav-links">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+    <a routerLink="/blogs" routerLinkActive="active">Blogs</a>
+    
+    <ng-container *ngIf="authService.isLoggedIn(); else notLoggedIn">
+      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/create-blog" routerLinkActive="active">Create Blog</a>
+      <button (click)="logout()" class="btn-logout">Logout</button>
+    </ng-container>
+    
+    <ng-template #notLoggedIn>
+      <a routerLink="/login" routerLinkActive="active">Login</a>
+      <a routerLink="/register" routerLinkActive="active">Register</a>
+    </ng-template>
+  </div>
 </nav>

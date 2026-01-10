@@ -2,6 +2,15 @@
   <div class="header">
     <h1>All Blogs</h1>
     <p>Discover stories, thinking, and expertise from writers on any topic.</p>
+    
+    <div class="search-bar">
+      <input 
+        type="text" 
+        [(ngModel)]="searchTerm" 
+        (input)="onSearch()" 
+        placeholder="Search blogs by title, content, or author..."
+      >
+    </div>
   </div>
 
   <div *ngIf="isLoading" class="loading">
@@ -17,8 +26,12 @@
     <a routerLink="/create-blog" class="btn-create">Create Blog</a>
   </div>
 
-  <div class="blogs-grid" *ngIf="!isLoading && blogs.length > 0">
-    <div class="blog-card" *ngFor="let blog of blogs">
+  <div *ngIf="!isLoading && blogs.length > 0 && filteredBlogs.length === 0" class="no-blogs">
+    <p>No blogs matching your search.</p>
+  </div>
+
+  <div class="blogs-grid" *ngIf="!isLoading && filteredBlogs.length > 0">
+    <div class="blog-card" *ngFor="let blog of filteredBlogs">
       <div class="blog-header">
         <h2>
           <a [routerLink]="['/blogs', blog.id]">{{ blog.title }}</a>

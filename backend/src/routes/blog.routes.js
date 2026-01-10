@@ -1,9 +1,23 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
+const authMiddleware = require("../middleware/auth.middleware");
+const {
+  createBlog,
+  getAllBlogs,
+  getBlogById,
+  updateBlog,
+  deleteBlog,
+  getMyBlogs,
+} = require("../controllers/blog.controller");
 
-// Simple test route
-router.get('/', (req, res) => {
-  res.json({ message: 'Blog routes are working!' });
-});
+// Public routes
+router.get("/", getAllBlogs);
+router.get("/:id", getBlogById);
+
+// Protected routes
+router.post("/", authMiddleware, createBlog);
+router.put("/:id", authMiddleware, updateBlog);
+router.delete("/:id", authMiddleware, deleteBlog);
+router.get("/user/me", authMiddleware, getMyBlogs);
 
 module.exports = router;

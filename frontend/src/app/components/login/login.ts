@@ -1,30 +1,40 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  template: `
-    <h2 style="text-align:center;">Login</h2>
-
-    <form (submit)="login($event)" style="max-width:300px;margin:auto;">
-      <input placeholder="Email" required />
-      <button>Login</button>
-    </form>
-  `
+  imports: [CommonModule, FormsModule, RouterModule],
+  templateUrl: './login.html',
+  styleUrls: ['./login.css'],
 })
 export class LoginComponent {
+  loginData = {
+    email: '',
+    password: '',
+  };
+  isLoading = false;
+  errorMessage = '';
 
-  constructor(
-    private auth: AuthService,
-    private router: Router
-  ) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
-  login(event: Event) {
-    event.preventDefault();
-    const email = (event.target as any)[0].value;
-    this.auth.login(email);
-    this.router.navigate(['/dashboard']);
+  onSubmit(): void {
+    this.errorMessage = '';
+    this.isLoading = true;
+
+    this.authService.login(this.loginData).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.router.navigate(['/dashboard']);
+        }
+      },
+      error: (error) => {
+        this.errorMessage = error.error?.message || 'Login failed. Please try again.';
+        this.isLoading = false;
+      },
+    });
   }
 }
