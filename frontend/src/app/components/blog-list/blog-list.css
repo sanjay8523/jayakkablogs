@@ -1,0 +1,140 @@
+.blog-list-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: calc(100vh - 80px);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 2rem 0;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.header p {
+  color: #7f8c8d;
+  font-size: 1.125rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: #7f8c8d;
+  font-size: 1.125rem;
+}
+
+.error-message {
+  background-color: #fee;
+  color: #c33;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.no-blogs {
+  text-align: center;
+  padding: 3rem;
+}
+
+.no-blogs p {
+  color: #7f8c8d;
+  font-size: 1.125rem;
+  margin-bottom: 1.5rem;
+}
+
+.btn-create {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  background-color: #3498db;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.btn-create:hover {
+  background-color: #2980b9;
+}
+
+.blogs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.blog-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.blog-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.blog-header h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+}
+
+.blog-header h2 a {
+  color: #2c3e50;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.blog-header h2 a:hover {
+  color: #3498db;
+}
+
+.blog-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: #7f8c8d;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.author {
+  font-weight: 500;
+}
+
+.blog-excerpt {
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.read-more {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+.read-more:hover {
+  color: #2980b9;
+}
+
+@media (max-width: 768px) {
+  .blogs-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .header h1 {
+    font-size: 2rem;
+  }
+}

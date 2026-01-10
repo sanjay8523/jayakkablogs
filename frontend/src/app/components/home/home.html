@@ -1,0 +1,49 @@
+<p>home works!</p>
+<div class="home-container">
+  <div class="hero-section">
+    <h1>Welcome to DevBlog</h1>
+    <p class="subtitle">Share your thoughts, ideas, and experiences with the world</p>
+    
+    <div class="cta-buttons">
+      <ng-container *ngIf="authService.isLoggedIn(); else notLoggedIn">
+        <a routerLink="/create-blog" class="btn btn-primary">Write a Blog</a>
+        <a routerLink="/blogs" class="btn btn-secondary">Read Blogs</a>
+      </ng-container>
+      
+      <ng-template #notLoggedIn>
+        <a routerLink="/register" class="btn btn-primary">Get Started</a>
+        <a routerLink="/blogs" class="btn btn-secondary">Explore Blogs</a>
+      </ng-template>
+    </div>
+  </div>
+
+  <div class="features-section">
+    <h2>Why DevBlog?</h2>
+    
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">✍️</div>
+        <h3>Easy Writing</h3>
+        <p>Create and publish your blog posts with our simple and intuitive editor</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🚀</div>
+        <h3>Fast & Secure</h3>
+        <p>Built with modern technologies for optimal performance and security</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">👥</div>
+        <h3>Community</h3>
+        <p>Connect with other developers and share your knowledge</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3>Responsive</h3>
+        <p>Access your blogs from any device - desktop, tablet, or mobile</p>
+      </div>
+    </div>
+  </div>
+</div>

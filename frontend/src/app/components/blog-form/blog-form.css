@@ -1,0 +1,127 @@
+.blog-form-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: calc(100vh - 80px);
+}
+
+.form-card {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+h2 {
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+}
+
+.error-message {
+  background-color: #fee;
+  color: #c33;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 2rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+.input-title {
+  width: 100%;
+  padding: 0.875rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1.125rem;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+}
+
+.input-content {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  line-height: 1.6;
+  box-sizing: border-box;
+  resize: vertical;
+  transition: border-color 0.3s;
+}
+
+.input-title:focus,
+.input-content:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-start;
+}
+
+.btn-submit,
+.btn-cancel {
+  padding: 0.875rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.btn-submit {
+  background-color: #27ae60;
+  color: white;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: #229954;
+}
+
+.btn-submit:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  background-color: #ecf0f1;
+  color: #2c3e50;
+}
+
+.btn-cancel:hover {
+  background-color: #bdc3c7;
+}
+
+@media (max-width: 768px) {
+  .form-card {
+    padding: 1.5rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .btn-submit,
+  .btn-cancel {
+    width: 100%;
+  }
+}
