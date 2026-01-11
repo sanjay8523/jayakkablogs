@@ -34,13 +34,14 @@ const uploadToCloudinary = async (
       const uploadOptions = {
         folder: folder,
         resource_type: resourceType,
-        // Automatic format optimization (f_auto)
+        // Automatic format optimization
         fetch_format: "auto",
-        // Automatic quality optimization (q_auto)
+        // Automatic quality optimization
         quality: "auto",
-        // For images: generate responsive breakpoints
+        // For images: generate responsive breakpoints (FIXED)
         ...(resourceType === "image" && {
           responsive_breakpoints: {
+            create_derived: true, // ✅ ADDED THIS REQUIRED PROPERTY
             bytes_step: 20000,
             min_width: 200,
             max_width: 1000,

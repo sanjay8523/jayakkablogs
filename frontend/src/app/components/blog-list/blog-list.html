@@ -1,52 +1,200 @@
-<div class="blog-list-container">
-  <div class="header">
-    <h1>All Blogs</h1>
-    <p>Discover stories, thinking, and expertise from writers on any topic.</p>
-    
-    <div class="search-bar">
-      <input 
-        type="text" 
-        [(ngModel)]="searchTerm" 
-        (input)="onSearch()" 
-        placeholder="Search blogs by title, content, or author..."
-      >
+<div class="ultimate-blog-container">
+  <!-- Animated Gradient Background -->
+  <div class="gradient-bg">
+    <div class="gradient-sphere sphere-1"></div>
+    <div class="gradient-sphere sphere-2"></div>
+    <div class="gradient-sphere sphere-3"></div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-icon">🌟</span>
+        <span>Discover Amazing Stories</span>
+      </div>
+      <h1 class="hero-heading">
+        Explore <span class="gradient-text">Incredible</span> Stories
+      </h1>
+      <p class="hero-description">
+        Join thousands of readers discovering thought-provoking articles, inspiring stories, and expert insights from creators around the world.
+      </p>
+
+      <!-- Enhanced Search Bar -->
+      <div class="search-container">
+        <div class="search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (input)="onSearch()"
+            placeholder="Search by title, content, author..."
+            class="search-input"
+          />
+          <button *ngIf="searchTerm" (click)="clearSearch()" class="clear-btn">
+            ✕
+          </button>
+        </div>
+        
+        <!-- Filter Pills -->
+        <div class="filter-pills" *ngIf="!isLoading && blogs.length > 0">
+          <button 
+            [class.active]="sortBy === 'latest'" 
+            (click)="setSortBy('latest')" 
+            class="filter-pill">
+            🕐 Latest
+          </button>
+          <button 
+            [class.active]="sortBy === 'popular'" 
+            (click)="setSortBy('popular')" 
+            class="filter-pill">
+            🔥 Popular
+          </button>
+          <button 
+            [class.active]="sortBy === 'trending'" 
+            (click)="setSortBy('trending')" 
+            class="filter-pill">
+            📈 Trending
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Bar -->
+  <div class="stats-banner" *ngIf="!isLoading && blogs.length > 0">
+    <div class="stat-item">
+      <span class="stat-value">{{ blogs.length }}</span>
+      <span class="stat-label">Stories</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <span class="stat-value">{{ getTotalViews() }}</span>
+      <span class="stat-label">Total Views</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <span class="stat-value">{{ getTotalLikes() }}</span>
+      <span class="stat-label">Total Likes</span>
     </div>
   </div>
 
-  <div *ngIf="isLoading" class="loading">
-    <p>Loading blogs...</p>
-  </div>
+  <!-- Main Content -->
+  <div class="content-section">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="loading-spinner">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+      </div>
+      <p class="loading-text">Loading amazing content...</p>
+    </div>
 
-  <div *ngIf="errorMessage" class="error-message">
-    {{ errorMessage }}
-  </div>
+    <!-- Error State -->
+    <div *ngIf="errorMessage && !isLoading" class="error-container">
+      <div class="error-icon">⚠️</div>
+      <h3 class="error-title">Oops! Something went wrong</h3>
+      <p class="error-text">{{ errorMessage }}</p>
+    </div>
 
-  <div *ngIf="!isLoading && blogs.length === 0" class="no-blogs">
-    <p>No blogs found. Be the first to write one!</p>
-    <a routerLink="/create-blog" class="btn-create">Create Blog</a>
-  </div>
+    <!-- Empty State (No blogs) -->
+    <div *ngIf="!isLoading && blogs.length === 0 && !errorMessage" class="empty-container">
+      <div class="empty-illustration">
+        <div class="empty-circle"></div>
+        <div class="empty-icon">📝</div>
+      </div>
+      <h3 class="empty-title">No Stories Yet</h3>
+      <p class="empty-text">Be the first to share your story with the world!</p>
+      <a routerLink="/create-blog" class="btn-create-first">
+        <span>✍️</span>
+        <span>Write First Story</span>
+      </a>
+    </div>
 
-  <div *ngIf="!isLoading && blogs.length > 0 && filteredBlogs.length === 0" class="no-blogs">
-    <p>No blogs matching your search.</p>
-  </div>
+    <!-- No Search Results -->
+    <div *ngIf="!isLoading && blogs.length > 0 && filteredBlogs.length === 0" class="no-results-container">
+      <div class="no-results-icon">🔍</div>
+      <h3 class="no-results-title">No Results Found</h3>
+      <p class="no-results-text">Try different keywords or clear your search</p>
+      <button (click)="clearSearch()" class="btn-clear-search">
+        Clear Search
+      </button>
+    </div>
 
-  <div class="blogs-grid" *ngIf="!isLoading && filteredBlogs.length > 0">
-    <div class="blog-card" *ngFor="let blog of filteredBlogs">
-      <div class="blog-header">
-        <h2>
-          <a [routerLink]="['/blogs', blog.id]">{{ blog.title }}</a>
-        </h2>
-        <div class="blog-meta">
-          <span class="author">By {{ blog.authorName }}</span>
-          <span class="date">{{ formatDate(blog.createdAt) }}</span>
+    <!-- Blog Grid -->
+    <div class="blogs-masonry" *ngIf="!isLoading && filteredBlogs.length > 0">
+      <div 
+        class="blog-card-premium" 
+        *ngFor="let blog of filteredBlogs; let i = index"
+        [style.animation-delay]="(i * 0.05) + 's'">
+        
+        <!-- Media Preview -->
+        <div class="card-media-container" *ngIf="blog.media">
+          <img 
+            *ngIf="blog.media.resourceType === 'image'" 
+            [src]="blog.media.url" 
+            [alt]="blog.title"
+            class="card-media-img"
+            loading="lazy">
+          <video 
+            *ngIf="blog.media.resourceType === 'video'" 
+            [src]="blog.media.url" 
+            class="card-media-video"
+            loading="lazy"></video>
+          <div class="media-gradient"></div>
+        </div>
+
+        <!-- Placeholder for no media -->
+        <div class="card-media-placeholder" *ngIf="!blog.media">
+          <div class="placeholder-icon">{{ getRandomEmoji() }}</div>
+        </div>
+
+        <!-- Card Content -->
+        <div class="card-body">
+          <!-- Author Info -->
+          <div class="author-mini">
+            <div class="author-avatar-mini">
+              {{ blog.authorName.charAt(0).toUpperCase() }}
+            </div>
+            <div class="author-details">
+              <span class="author-name-mini">{{ blog.authorName }}</span>
+              <span class="post-date">{{ getTimeAgo(blog.createdAt) }}</span>
+            </div>
+          </div>
+
+          <!-- Title -->
+          <h2 class="card-title">
+            <a [routerLink]="['/blogs', blog.id]">{{ blog.title }}</a>
+          </h2>
+
+          <!-- Excerpt -->
+          <p class="card-excerpt">{{ getExcerpt(blog.content) }}</p>
+
+          <!-- Stats and CTA -->
+          <div class="card-footer-mini">
+            <div class="mini-stats">
+              <span class="mini-stat">
+                <span class="stat-icon-mini">👁️</span>
+                <span>{{ formatNumber(blog.views) }}</span>
+              </span>
+              <span class="mini-stat">
+                <span class="stat-icon-mini">💙</span>
+                <span>{{ formatNumber(blog.likes) }}</span>
+              </span>
+              <span class="mini-stat">
+                <span class="stat-icon-mini">⏱️</span>
+                <span>{{ getReadingTime(blog.content) }} min</span>
+              </span>
+            </div>
+            
+            <a [routerLink]="['/blogs', blog.id]" class="read-link">
+              <span>Read</span>
+              <span class="arrow">→</span>
+            </a>
+          </div>
         </div>
       </div>
-
-      <p class="blog-excerpt">{{ getExcerpt(blog.content) }}</p>
-
-      <a [routerLink]="['/blogs', blog.id]" class="read-more">
-        Read more →
-      </a>
     </div>
   </div>
 </div>
