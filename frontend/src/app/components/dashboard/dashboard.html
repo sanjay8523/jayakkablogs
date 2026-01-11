@@ -1,80 +1,162 @@
-<div class="dashboard-container">
-  <!-- Hero Section -->
-  <div class="dashboard-hero">
-    <h1>✨ Welcome, {{ userName }}!</h1>
-    <p>Your creative space for sharing amazing content</p>
-    <a routerLink="/create-blog" class="btn-create-hero">
-      <span>✍️</span>
-      Create New Blog
-    </a>
+<div class="ultra-modern-dashboard">
+  <!-- Animated Background -->
+  <div class="animated-bg">
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+    <div class="gradient-orb orb-3"></div>
+  </div>
+
+  <!-- Hero Header -->
+  <div class="hero-header">
+    <div class="hero-content">
+      <div class="welcome-badge">
+        <span class="badge-icon">✨</span>
+        <span class="badge-text">Welcome back</span>
+      </div>
+      <h1 class="hero-title">
+        Hey, <span class="gradient-text">{{ userName }}</span>!
+      </h1>
+      <p class="hero-subtitle">Ready to create something amazing today?</p>
+      
+      <div class="hero-actions">
+        <a routerLink="/create-blog" class="btn-hero">
+          <span class="btn-icon">✍️</span>
+          <span class="btn-text">Create New Post</span>
+          <span class="btn-arrow">→</span>
+        </a>
+        <a routerLink="/blogs" class="btn-hero-outline">
+          <span class="btn-icon">🔍</span>
+          <span class="btn-text">Explore All Blogs</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards - REAL DATA -->
+  <div class="stats-container" *ngIf="!isLoading && !errorMessage">
+    <div class="stat-card">
+      <div class="stat-icon">📝</div>
+      <div class="stat-content">
+        <div class="stat-number">{{ blogs.length }}</div>
+        <div class="stat-label">Total Posts</div>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon">🔥</div>
+      <div class="stat-content">
+        <div class="stat-number">{{ totalViews }}</div>
+        <div class="stat-label">Total Views</div>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon">💙</div>
+      <div class="stat-content">
+        <div class="stat-number">{{ totalLikes }}</div>
+        <div class="stat-label">Total Likes</div>
+      </div>
+    </div>
   </div>
 
   <!-- Main Content -->
-  <div class="dashboard-content">
-    <!-- Stats Bar -->
-    <div class="stats-bar" *ngIf="!isLoading && !errorMessage">
-      <div class="stat-item">
-        <span class="stat-number">{{ blogs.length }}</span>
-        <span class="stat-label">Total Posts</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">🔥</span>
-        <span class="stat-label">Your Impact</span>
-      </div>
-    </div>
-
+  <div class="content-wrapper">
     <!-- Loading State -->
-    <div *ngIf="isLoading" class="loading-container">
-      <div class="loading-spinner"></div>
-      <p class="loading-text">Loading your masterpieces...</p>
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="loader">
+        <div class="loader-ring"></div>
+        <div class="loader-ring"></div>
+        <div class="loader-ring"></div>
+      </div>
+      <p class="loading-text">Loading your awesome content...</p>
     </div>
 
     <!-- Error State -->
-    <div *ngIf="errorMessage && !isLoading" class="error-card">
-      <h3>⚠️ Oops!</h3>
-      <p>{{ errorMessage }}</p>
-      <p style="margin-top: 1rem; font-size: 0.875rem;">
-        Make sure your backend is running on port 5000
-      </p>
+    <div *ngIf="errorMessage && !isLoading" class="error-state">
+      <div class="error-icon">⚠️</div>
+      <h3 class="error-title">Oops! Something went wrong</h3>
+      <p class="error-message">{{ errorMessage }}</p>
+      <button (click)="loadMyBlogs()" class="btn-retry">
+        <span>🔄</span>
+        Try Again
+      </button>
     </div>
 
     <!-- Empty State -->
     <div *ngIf="!isLoading && blogs.length === 0 && !errorMessage" class="empty-state">
-      <div class="empty-icon">📝</div>
-      <h3>No Blogs Yet</h3>
-      <p>Start your journey by creating your first amazing post!</p>
-      <a routerLink="/create-blog" class="btn-create-hero">
-        <span>✨</span>
-        Create Your First Blog
+      <div class="empty-illustration">
+        <div class="empty-circle"></div>
+        <div class="empty-icon">✨</div>
+      </div>
+      <h3 class="empty-title">Your story starts here</h3>
+      <p class="empty-text">Create your first blog post and share your thoughts with the world!</p>
+      <a routerLink="/create-blog" class="btn-create-first">
+        <span>✍️</span>
+        Create Your First Post
       </a>
     </div>
 
     <!-- Blogs Grid -->
-    <div class="blogs-grid" *ngIf="!isLoading && blogs.length > 0">
-      <div class="blog-card" *ngFor="let blog of blogs">
-        <div class="blog-card-header">
-          <h2 class="blog-card-title">{{ blog.title }}</h2>
-          <div class="blog-card-date">
-            📅 {{ formatDate(blog.createdAt) }}
+    <div class="blogs-section" *ngIf="!isLoading && blogs.length > 0">
+      <div class="section-header">
+        <h2 class="section-title">Your Posts</h2>
+        <p class="section-subtitle">{{ blogs.length }} post{{ blogs.length !== 1 ? 's' : '' }} published</p>
+      </div>
+
+      <div class="blogs-grid">
+        <div class="blog-card-modern" *ngFor="let blog of blogs; let i = index" [style.animation-delay]="i * 50 + 'ms'">
+          <div class="card-gradient"></div>
+          
+          <!-- Media Preview -->
+          <div class="card-media" *ngIf="blog.media">
+            <img *ngIf="blog.media.resourceType === 'image'" 
+                 [src]="blog.media.url" 
+                 [alt]="blog.title"
+                 loading="lazy">
+            <video *ngIf="blog.media.resourceType === 'video'" 
+                   [src]="blog.media.url" 
+                   controls
+                   loading="lazy"></video>
           </div>
-        </div>
+          
+          <div class="card-header">
+            <div class="card-date">
+              <span class="date-icon">📅</span>
+              <span>{{ formatDate(blog.createdAt) }}</span>
+            </div>
+          </div>
 
-        <div class="blog-card-body">
-          <p class="blog-card-excerpt">
-            {{ blog.content.length > 150 ? (blog.content.substring(0, 150) + '...') : blog.content }}
-          </p>
-        </div>
+          <div class="card-content">
+            <h3 class="card-title">{{ blog.title }}</h3>
+            <p class="card-excerpt">
+              {{ blog.content.length > 120 ? (blog.content.substring(0, 120) + '...') : blog.content }}
+            </p>
+          </div>
 
-        <div class="blog-card-actions">
-          <a [routerLink]="['/blogs', blog.id]" class="btn btn-view">
-            👁️ View
-          </a>
-          <a [routerLink]="['/edit-blog', blog.id]" class="btn btn-edit">
-            ✏️ Edit
-          </a>
-          <button (click)="deleteBlog(blog.id)" class="btn btn-delete">
-            🗑️ Delete
-          </button>
+          <div class="card-footer">
+            <div class="card-stats">
+              <span class="stat-item">
+                <span class="stat-icon">👁️</span>
+                <span>{{ blog.views || 0 }}</span>
+              </span>
+              <span class="stat-item">
+                <span class="stat-icon">💙</span>
+                <span>{{ blog.likes || 0 }}</span>
+              </span>
+            </div>
+
+            <div class="card-actions">
+              <a [routerLink]="['/blogs', blog.id]" class="action-btn view-btn" title="View">
+                <span>👁️</span>
+              </a>
+              <a [routerLink]="['/edit-blog', blog.id]" class="action-btn edit-btn" title="Edit">
+                <span>✏️</span>
+              </a>
+              <button (click)="deleteBlog(blog.id)" class="action-btn delete-btn" title="Delete">
+                <span>🗑️</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

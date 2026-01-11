@@ -5,24 +5,17 @@ export interface Blog {
   authorId: string;
   authorName: string;
   authorEmail: string;
+  media?: {
+    url: string;
+    publicId: string;
+    format: string;
+    resourceType: string;
+    width: number;
+    height: number;
+  } | null;
+  views: number;
+  likes: number;
+  likedBy: string[];
   createdAt: string;
   updatedAt: string;
-}
-
-export interface BlogResponse {
-  success: boolean;
-  blog?: Blog;
-  blogs?: Blog[];
-  count?: number;
-  message?: string;
-}
-
-export interface CreateBlogRequest {
-  title: string;
-  content: string;
-}
-
-export interface UpdateBlogRequest {
-  title?: string;
-  content?: string;
 }

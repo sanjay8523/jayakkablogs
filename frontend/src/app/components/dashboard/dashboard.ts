@@ -18,6 +18,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isLoading = true;
   errorMessage = '';
   userName = 'User';
+  totalViews = 0;
+  totalLikes = 0;
   private authSubscription?: Subscription;
 
   constructor(
@@ -27,17 +29,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // 1. Subscribe to the currentUser to fix "undefined" errors on refresh
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
     this.authSubscription = this.authService.currentUser.subscribe((user) => {
       if (user) {
         this.userName = user.name;
+      } else {
+        this.router.navigate(['/login']);
       }
     });
 
     this.loadMyBlogs();
   }
 
-  // Cleanup to prevent memory leaks
   ngOnDestroy(): void {
     if (this.authSubscription) {
       this.authSubscription.unsubscribe();
@@ -46,16 +53,33 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   loadMyBlogs(): void {
     this.isLoading = true;
+    this.errorMessage = '';
+
     this.blogService.getMyBlogs().subscribe({
       next: (response) => {
         if (response.success && response.blogs) {
           this.blogs = response.blogs;
+          // Use REAL stats from backend
+          this.totalViews = response.totalViews || 0;
+          this.totalLikes = response.totalLikes || 0;
         }
         this.isLoading = false;
       },
       error: (error) => {
         console.error('Error loading dashboard blogs:', error);
-        this.errorMessage = 'Failed to load your personal blogs.';
+
+        if (error.status === 401) {
+          this.errorMessage = 'Session expired. Please login again.';
+          setTimeout(() => {
+            this.authService.logout();
+            this.router.navigate(['/login']);
+          }, 2000);
+        } else {
+          this.errorMessage =
+            error.error?.message ||
+            'Failed to load your blogs. Please check if the backend is running.';
+        }
+
         this.isLoading = false;
       },
     });
@@ -67,10 +91,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.blogService.deleteBlog(id).subscribe({
       next: (response) => {
         if (response.success) {
+          // Remove from local array
+          const deletedBlog = this.blogs.find((b) => b.id === id);
           this.blogs = this.blogs.filter((blog) => blog.id !== id);
+
+          // Update stats
+          if (deletedBlog) {
+            this.totalViews -= deletedBlog.views || 0;
+            this.totalLikes -= deletedBlog.likes || 0;
+          }
         }
       },
-      error: () => alert('Failed to delete blog. Please try again.'),
+      error: (error) => {
+        alert(error.error?.message || 'Failed to delete blog. Please try again.');
+      },
     });
   }
 

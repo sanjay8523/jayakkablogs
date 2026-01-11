@@ -8,16 +8,18 @@ const {
   updateBlog,
   deleteBlog,
   getMyBlogs,
+  toggleLike,
 } = require("../controllers/blog.controller");
 
 // Public routes
 router.get("/", getAllBlogs);
 router.get("/:id", getBlogById);
 
-// Protected routes
+// Protected routes - PUT /user/me BEFORE /:id to avoid conflicts
+router.get("/user/me", authMiddleware, getMyBlogs);
 router.post("/", authMiddleware, createBlog);
 router.put("/:id", authMiddleware, updateBlog);
 router.delete("/:id", authMiddleware, deleteBlog);
-router.get("/user/me", authMiddleware, getMyBlogs);
+router.post("/:id/like", authMiddleware, toggleLike);
 
 module.exports = router;
