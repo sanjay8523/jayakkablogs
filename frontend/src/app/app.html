@@ -1,8 +1,13 @@
 <app-navbar></app-navbar>
 
-<div style="text-align:center; margin-top:30px;">
-  <h1>DevBlog is running 🚀</h1>
-  <p>If you see this, Angular is working.</p>
-</div>
+<main class="main-content">
+  <router-outlet></router-outlet>
+</main>
 
-<router-outlet></router-outlet>
+<footer class="app-footer">
+  <div class="container">
+    <div class="footer-content">
+      <p>&copy; 2024 DevBlog. Built with Angular & Firebase Admin SDK.</p>
+    </div>
+  </div>
+</footer>

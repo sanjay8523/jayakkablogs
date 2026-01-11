@@ -1,63 +1,50 @@
-const bcrypt = require('bcryptjs');
-const { db } = require('../config/firebase.config');
-const { generateToken } = require('../utils/jwt.utils');
+const { admin, db } = require("../config/firebase.config");
+const bcrypt = require("bcryptjs");
+const { generateToken } = require("../utils/jwt.utils");
 
-// Register new user
+// Register new user (Firebase Auth + Firestore)
 const register = async (req, res) => {
   try {
     const { email, password, name } = req.body;
 
-    // Validation
     if (!email || !password || !name) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide email, password, and name.'
-      });
+      return res
+        .status(400)
+        .json({ success: false, message: "Please provide all fields." });
     }
 
-    // Check if user already exists
-    const usersRef = db.collection('users');
-    const existingUser = await usersRef.where('email', '==', email).get();
+    // 1. Create User in Firebase Authentication Tab
+    const userRecord = await admin.auth().createUser({
+      email: email,
+      password: password,
+      displayName: name,
+    });
 
-    if (!existingUser.empty) {
-      return res.status(400).json({
-        success: false,
-        message: 'User already exists with this email.'
-      });
-    }
-
-    // Hash password
+    // 2. Hash password for custom Firestore storage
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
+    // 3. Save profile to Firestore using the Firebase UID
     const newUser = {
       email,
       password: hashedPassword,
       name,
-      createdAt: new Date().toISOString()
+      firebaseUid: userRecord.uid,
+      createdAt: new Date().toISOString(),
     };
 
-    const userDoc = await usersRef.add(newUser);
+    await db.collection("users").doc(userRecord.uid).set(newUser);
 
-    // Generate JWT token
-    const token = generateToken(userDoc.id);
+    // 4. Generate custom JWT token
+    const token = generateToken(userRecord.uid);
 
     res.status(201).json({
       success: true,
-      message: 'User registered successfully!',
+      message: "User registered successfully!",
       token,
-      user: {
-        id: userDoc.id,
-        email,
-        name
-      }
+      user: { id: userRecord.uid, email, name },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Registration failed.',
-      error: error.message
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -66,92 +53,67 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validation
     if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide email and password.'
-      });
+      return res
+        .status(400)
+        .json({ success: false, message: "Provide email and password." });
     }
 
-    // Find user
-    const usersRef = db.collection('users');
-    const userSnapshot = await usersRef.where('email', '==', email).get();
+    // Find user in Firestore by email
+    const userSnapshot = await db
+      .collection("users")
+      .where("email", "==", email)
+      .limit(1)
+      .get();
 
     if (userSnapshot.empty) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid email or password.'
-      });
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials." });
     }
 
-    // Get user data
     const userDoc = userSnapshot.docs[0];
     const userData = userDoc.data();
 
-    // Check password
+    // Verify hashed password
     const isPasswordValid = await bcrypt.compare(password, userData.password);
 
     if (!isPasswordValid) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid email or password.'
-      });
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials." });
     }
 
-    // Generate JWT token
     const token = generateToken(userDoc.id);
 
     res.status(200).json({
       success: true,
-      message: 'Login successful!',
       token,
-      user: {
-        id: userDoc.id,
-        email: userData.email,
-        name: userData.name
-      }
+      user: { id: userDoc.id, email: userData.email, name: userData.name },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Login failed.',
-      error: error.message
-    });
+    res
+      .status(500)
+      .json({ success: false, message: "Login failed.", error: error.message });
   }
 };
 
-// Get current user (protected route)
+// Get current user profile
 const getMe = async (req, res) => {
   try {
-    const userId = req.userId; // From auth middleware
-
-    const userDoc = await db.collection('users').doc(userId).get();
-
-    if (!userDoc.exists) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found.'
-      });
-    }
+    const userDoc = await db.collection("users").doc(req.userId).get();
+    if (!userDoc.exists)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found." });
 
     const userData = userDoc.data();
-
     res.status(200).json({
       success: true,
-      user: {
-        id: userDoc.id,
-        email: userData.email,
-        name: userData.name,
-        createdAt: userData.createdAt
-      }
+      user: { id: userDoc.id, email: userData.email, name: userData.name },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get user data.',
-      error: error.message
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 };
 

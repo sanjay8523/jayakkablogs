@@ -1,123 +1,58 @@
-/* You can add global styles to this file, and also import other style files */
-/* Modern Reset & Variables */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 :root {
-  --primary: #4F46E5; /* Indigo-600 */
-  --primary-hover: #4338CA;
-  --secondary: #64748B; /* Slate-500 */
-  --background: #F8FAFC; /* Slate-50 */
-  --surface: #FFFFFF;
-  --text-main: #1E293B; /* Slate-800 */
-  --text-muted: #64748B;
-  --danger: #EF4444;
-  --success: #10B981;
-  --radius: 0.75rem;
-  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --bg-main: #f8fafc;
+  --bg-card: #ffffff;
+  --text-dark: #0f172a;
+  --text-light: #64748b;
+  --danger: #ef4444;
+  --radius: 12px;
+  --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background-color: var(--background);
-  color: var(--text-main);
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-dark);
   margin: 0;
   line-height: 1.6;
 }
 
-/* Global Layout */
-.container, .blog-list-container, .dashboard-container, .blog-detail-container {
+.container {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0 1.5rem;
 }
 
-/* Modern Forms */
-input, textarea {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1px solid #E2E8F0;
-  border-radius: var(--radius);
-  font-size: 1rem;
-  transition: border-color 0.2s;
-  box-sizing: border-box;
-  margin-bottom: 1rem;
+/* Navbar Fix */
+.navbar {
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0.8rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
-input:focus, textarea:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-}
+.nav-content { display: flex; justify-content: space-between; align-items: center; }
+.logo { font-size: 1.5rem; font-weight: 800; text-decoration: none; color: var(--primary); }
+.nav-links { display: flex; gap: 1.5rem; align-items: center; }
+.nav-links a { text-decoration: none; color: var(--text-light); font-weight: 500; transition: color 0.2s; }
+.nav-links a.active { color: var(--primary); }
 
-/* Modern Buttons */
-button, .btn, .btn-primary, .btn-submit, .btn-create, .btn-view, .btn-edit, .btn-delete {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.6rem 1.25rem;
-  border-radius: var(--radius);
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-  text-decoration: none;
-  font-size: 0.95rem;
-}
+/* User Controls */
+.user-meta { display: flex; align-items: center; gap: 1rem; padding-left: 1rem; border-left: 1px solid #e2e8f0; }
+.user-name { font-size: 0.875rem; color: var(--text-light); font-weight: 500; }
 
-.btn-primary, .btn-submit, .btn-create {
-  background-color: var(--primary);
-  color: white;
-}
+/* Global UI Components */
+.btn { padding: 0.6rem 1.25rem; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+.btn-sm { padding: 0.4rem 0.8rem; font-size: 0.875rem; }
+.btn-logout { background: #fee2e2; color: var(--danger); border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
 
-.btn-primary:hover, .btn-submit:hover, .btn-create:hover {
-  background-color: var(--primary-hover);
-  transform: translateY(-1px);
-}
-
-.btn-secondary, .btn-cancel {
-  background-color: white;
-  color: var(--text-main);
-  border: 1px solid #E2E8F0;
-}
-
-.btn-delete {
-  background-color: #FEE2E2;
-  color: var(--danger);
-}
-
-.btn-delete:hover {
-  background-color: #FECACA;
-}
-
-/* Cards */
-.card, .blog-card, .form-card, .register-card, .login-card {
-  background: var(--surface);
-  border-radius: var(--radius);
-  padding: 2rem;
-  box-shadow: var(--shadow);
-  border: 1px solid #F1F5F9;
-}
-
-/* Navbar */
-nav {
-  background: white !important;
-  border-bottom: 1px solid #E2E8F0;
-  padding: 1rem 0;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
-}
-
-nav a {
-  color: var(--text-muted) !important;
-  font-weight: 500;
-  margin: 0 1rem;
-  padding: 0.5rem 0;
-}
-
-nav a.active, nav a:hover {
-  color: var(--primary) !important;
-  border-bottom: 2px solid var(--primary);
-}
-
-/* Search Bar */
-.search-bar {
-  max-width: 500px;
-  margin: 0 auto 2rem auto;
-}
+.main-content { min-height: calc(100vh - 200px); padding: 2rem 0; }
+.app-footer { background: white; border-top: 1px solid #e2e8f0; padding: 3rem 0; text-align: center; color: var(--text-light); }

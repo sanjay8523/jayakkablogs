@@ -1,21 +1,25 @@
-<nav>
-  <div class="nav-brand">
-    <a routerLink="/">DevBlog</a>
-  </div>
-  
-  <div class="nav-links">
-    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
-    <a routerLink="/blogs" routerLinkActive="active">Blogs</a>
+<nav class="navbar">
+  <div class="container nav-content">
+    <div class="nav-brand">
+      <a routerLink="/" class="logo">🚀 DevBlog</a>
+    </div>
     
-    <ng-container *ngIf="authService.isLoggedIn(); else notLoggedIn">
-      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-      <a routerLink="/create-blog" routerLinkActive="active">Create Blog</a>
-      <button (click)="logout()" class="btn-logout">Logout</button>
-    </ng-container>
-    
-    <ng-template #notLoggedIn>
-      <a routerLink="/login" routerLinkActive="active">Login</a>
-      <a routerLink="/register" routerLinkActive="active">Register</a>
-    </ng-template>
+    <div class="nav-links">
+      <a routerLink="/blogs" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Explore</a>
+      
+      <ng-container *ngIf="authService.currentUser | async as user; else guest">
+        <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+        <a routerLink="/create-blog" class="btn btn-primary btn-sm">Write Post</a>
+        <div class="user-meta">
+          <span class="user-name">Hi, {{ user.name }}</span>
+          <button (click)="logout()" class="btn-logout">Logout</button>
+        </div>
+      </ng-container>
+      
+      <ng-template #guest>
+        <a routerLink="/login" routerLinkActive="active">Login</a>
+        <a routerLink="/register" class="btn btn-primary btn-sm">Join Now</a>
+      </ng-template>
+    </div>
   </div>
 </nav>

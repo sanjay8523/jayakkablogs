@@ -8,16 +8,13 @@ import { User, AuthResponse, LoginRequest, RegisterRequest } from '../models/use
   providedIn: 'root',
 })
 export class AuthService {
-  private currentUserSubject: BehaviorSubject<User | null>;
-  public currentUser: Observable<User | null>;
+  // BehaviorSubject emits the current user to all subscribers immediately
+  private currentUserSubject = new BehaviorSubject<User | null>(
+    JSON.parse(localStorage.getItem('currentUser') || 'null')
+  );
+  public currentUser = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) {
-    const storedUser = localStorage.getItem('currentUser');
-    this.currentUserSubject = new BehaviorSubject<User | null>(
-      storedUser ? JSON.parse(storedUser) : null
-    );
-    this.currentUser = this.currentUserSubject.asObservable();
-  }
+  constructor(private http: HttpClient) {}
 
   public get currentUserValue(): User | null {
     return this.currentUserSubject.value;
@@ -26,11 +23,7 @@ export class AuthService {
   register(data: RegisterRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/register`, data).pipe(
       tap((response) => {
-        if (response.success && response.token) {
-          localStorage.setItem('token', response.token);
-          localStorage.setItem('currentUser', JSON.stringify(response.user));
-          this.currentUserSubject.next(response.user);
-        }
+        if (response.success) this.setSession(response);
       })
     );
   }
@@ -38,19 +31,21 @@ export class AuthService {
   login(data: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login`, data).pipe(
       tap((response) => {
-        if (response.success && response.token) {
-          localStorage.setItem('token', response.token);
-          localStorage.setItem('currentUser', JSON.stringify(response.user));
-          this.currentUserSubject.next(response.user);
-        }
+        if (response.success) this.setSession(response);
       })
     );
+  }
+
+  private setSession(authResult: AuthResponse): void {
+    localStorage.setItem('token', authResult.token);
+    localStorage.setItem('currentUser', JSON.stringify(authResult.user));
+    this.currentUserSubject.next(authResult.user); // Triggers Navbar update
   }
 
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
-    this.currentUserSubject.next(null);
+    this.currentUserSubject.next(null); // Clears user state across app
   }
 
   getToken(): string | null {
