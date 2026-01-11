@@ -1,37 +1,146 @@
-<p>blog-detail works!</p>
-<div class="blog-detail-container">
-  <div *ngIf="isLoading" class="loading">
-    <p>Loading blog...</p>
+<div class="ultra-modern-detail-container">
+  <!-- Animated Background -->
+  <div class="animated-bg">
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+    <div class="gradient-orb orb-3"></div>
   </div>
 
-  <div *ngIf="errorMessage" class="error-message">
-    {{ errorMessage }}
-    <a routerLink="/blogs" class="back-link">← Back to Blogs</a>
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="loader">
+      <div class="loader-ring"></div>
+      <div class="loader-ring"></div>
+      <div class="loader-ring"></div>
+    </div>
+    <p class="loading-text">Loading story...</p>
   </div>
 
+  <!-- Error State -->
+  <div *ngIf="errorMessage && !isLoading" class="error-state">
+    <div class="error-icon">😞</div>
+    <h3 class="error-title">Oops! Something went wrong</h3>
+    <p class="error-message">{{ errorMessage }}</p>
+    <a routerLink="/blogs" class="btn-back">
+      <span>←</span>
+      <span>Back to All Blogs</span>
+    </a>
+  </div>
+
+  <!-- Blog Article -->
   <article *ngIf="!isLoading && blog" class="blog-article">
-    <header class="blog-header">
-      <h1>{{ blog.title }}</h1>
-      
-      <div class="blog-meta">
-        <div class="author-info">
-          <span class="author-name">{{ blog.authorName }}</span>
-          <span class="date">{{ formatDate(blog.createdAt) }}</span>
+    <!-- Hero Section -->
+    <div class="article-hero">
+      <!-- Media Preview -->
+      <div class="hero-media" *ngIf="blog.media">
+        <img *ngIf="blog.media.resourceType === 'image'" 
+             [src]="blog.media.url" 
+             [alt]="blog.title"
+             class="hero-image">
+        <video *ngIf="blog.media.resourceType === 'video'" 
+               [src]="blog.media.url" 
+               controls
+               class="hero-video"></video>
+        <div class="media-overlay"></div>
+      </div>
+
+      <!-- Title and Meta -->
+      <div class="hero-content">
+        <div class="breadcrumb">
+          <a routerLink="/blogs" class="breadcrumb-link">Blogs</a>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-current">Article</span>
         </div>
 
-        <div class="actions" *ngIf="isOwner">
-          <a [routerLink]="['/edit-blog', blog.id]" class="btn-edit">Edit</a>
-          <button (click)="deleteBlog()" class="btn-delete">Delete</button>
+        <h1 class="article-title">{{ blog.title }}</h1>
+
+        <div class="article-meta">
+          <div class="meta-left">
+            <div class="author-card">
+              <div class="author-avatar">{{ blog.authorName.charAt(0).toUpperCase() }}</div>
+              <div class="author-info">
+                <div class="author-name">{{ blog.authorName }}</div>
+                <div class="author-email">{{ blog.authorEmail }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="meta-right">
+            <div class="meta-item">
+              <span class="meta-icon">📅</span>
+              <span>{{ formatDate(blog.createdAt) }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-icon">⏱️</span>
+              <span>{{ getReadingTime() }} min read</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-icon">👁️</span>
+              <span>{{ blog.views }} views</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons (Owner Only) -->
+        <div class="hero-actions" *ngIf="isOwner">
+          <a [routerLink]="['/edit-blog', blog.id]" class="btn-action btn-edit">
+            <span>✏️</span>
+            <span>Edit</span>
+          </a>
+          <button (click)="deleteBlog()" class="btn-action btn-delete">
+            <span>🗑️</span>
+            <span>Delete</span>
+          </button>
         </div>
       </div>
-    </header>
-
-    <div class="blog-content">
-      <p>{{ blog.content }}</p>
     </div>
 
-    <footer class="blog-footer">
-      <a routerLink="/blogs" class="back-link">← Back to All Blogs</a>
-    </footer>
+    <!-- Content Section -->
+    <div class="article-body">
+      <div class="content-wrapper">
+        <div class="article-content">
+          <p>{{ blog.content }}</p>
+        </div>
+
+        <!-- Engagement Bar -->
+        <div class="engagement-bar">
+          <button 
+            (click)="toggleLike()" 
+            [disabled]="isLiking"
+            [class.liked]="hasLiked"
+            class="btn-like">
+            <span class="like-icon">{{ hasLiked ? '💙' : '🤍' }}</span>
+            <span class="like-count">{{ blog.likes }}</span>
+            <span class="like-text">{{ hasLiked ? 'Liked' : 'Like' }}</span>
+          </button>
+
+          <div class="engagement-stats">
+            <div class="stat-badge">
+              <span class="stat-icon">👁️</span>
+              <span>{{ blog.views }} views</span>
+            </div>
+            <div class="stat-badge">
+              <span class="stat-icon">💙</span>
+              <span>{{ blog.likes }} likes</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tags Section (Optional - if you add tags feature) -->
+        <div class="article-tags">
+          <span class="tag">#Technology</span>
+          <span class="tag">#Development</span>
+          <span class="tag">#Blog</span>
+        </div>
+
+        <!-- Footer Navigation -->
+        <div class="article-footer">
+          <a routerLink="/blogs" class="btn-back-footer">
+            <span>←</span>
+            <span>Back to All Stories</span>
+          </a>
+        </div>
+      </div>
+    </div>
   </article>
 </div>

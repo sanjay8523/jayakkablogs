@@ -19,3 +19,26 @@ export interface Blog {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface BlogResponse {
+  success: boolean;
+  message?: string;
+  blog?: Blog;
+  blogs?: Blog[];
+  count?: number;
+  totalViews?: number;
+  totalLikes?: number;
+}
+
+export interface CreateBlogRequest {
+  title: string;
+  content: string;
+  media?: File;
+}
+
+export interface UpdateBlogRequest {
+  title?: string;
+  content?: string;
+  media?: File;
+  removeMedia?: boolean;
+}

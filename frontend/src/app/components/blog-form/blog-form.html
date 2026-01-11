@@ -1,14 +1,35 @@
-<div class="blog-form-container">
-  <div class="form-card">
-    <h2>{{ isEditMode ? 'Edit Blog' : 'Create New Blog' }}</h2>
+<div class="ultra-modern-form-container">
+  <!-- Animated Background -->
+  <div class="animated-bg">
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+    <div class="gradient-orb orb-3"></div>
+  </div>
 
-    <div *ngIf="errorMessage" class="error-message">
-      {{ errorMessage }}
+  <div class="form-wrapper">
+    <div class="form-header">
+      <h1 class="form-title">
+        <span class="title-icon">{{ isEditMode ? '✏️' : '✨' }}</span>
+        {{ isEditMode ? 'Edit Your Story' : 'Create Your Story' }}
+      </h1>
+      <p class="form-subtitle">
+        {{ isEditMode ? 'Update your masterpiece' : 'Share your thoughts with the world' }}
+      </p>
     </div>
 
-    <form (ngSubmit)="onSubmit()" #blogForm="ngForm">
+    <div *ngIf="errorMessage" class="error-banner">
+      <span class="error-icon">⚠️</span>
+      <span>{{ errorMessage }}</span>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #blogForm="ngForm" class="modern-form">
+      <!-- Title Input -->
       <div class="form-group">
-        <label for="title">Title</label>
+        <label for="title" class="form-label">
+          <span class="label-icon">📝</span>
+          <span class="label-text">Title</span>
+          <span class="label-required">*</span>
+        </label>
         <input
           type="text"
           id="title"
@@ -16,13 +37,18 @@
           [(ngModel)]="blogData.title"
           required
           minlength="3"
-          placeholder="Enter blog title"
-          class="input-title"
+          placeholder="Enter a captivating title..."
+          class="form-input"
         />
       </div>
 
+      <!-- Content Textarea -->
       <div class="form-group">
-        <label for="content">Content</label>
+        <label for="content" class="form-label">
+          <span class="label-icon">📄</span>
+          <span class="label-text">Content</span>
+          <span class="label-required">*</span>
+        </label>
         <textarea
           id="content"
           name="content"
@@ -30,21 +56,75 @@
           required
           minlength="10"
           rows="15"
-          placeholder="Write your blog content here..."
-          class="input-content"
+          placeholder="Write your story here..."
+          class="form-textarea"
         ></textarea>
+        <div class="textarea-footer">
+          <span class="char-count">{{ blogData.content.length }} characters</span>
+        </div>
       </div>
 
+      <!-- Media Upload -->
+      <div class="form-group">
+        <label class="form-label">
+          <span class="label-icon">🖼️</span>
+          <span class="label-text">Media (Optional)</span>
+        </label>
+        
+        <!-- Upload Area -->
+        <div class="upload-area" *ngIf="!filePreview && !existingMedia">
+          <input
+            type="file"
+            id="media"
+            accept="image/*,video/*"
+            (change)="onFileSelected($event)"
+            class="file-input"
+          />
+          <label for="media" class="upload-label">
+            <div class="upload-icon">📤</div>
+            <div class="upload-text">
+              <p class="upload-title">Click to upload or drag and drop</p>
+              <p class="upload-subtitle">Images or Videos (Max 50MB)</p>
+            </div>
+          </label>
+        </div>
+
+        <!-- File Preview -->
+        <div class="media-preview" *ngIf="filePreview || existingMedia">
+          <div class="preview-container">
+            <img *ngIf="filePreview || (existingMedia && existingMedia.resourceType === 'image')" 
+                 [src]="filePreview || existingMedia?.url" 
+                 alt="Preview"
+                 class="preview-image">
+            <video *ngIf="existingMedia && existingMedia.resourceType === 'video' && !filePreview" 
+                   [src]="existingMedia.url" 
+                   controls
+                   class="preview-video"></video>
+          </div>
+          <button type="button" (click)="removeFile()" class="btn-remove-media">
+            <span>🗑️</span>
+            <span>Remove Media</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
       <div class="form-actions">
         <button
           type="submit"
           [disabled]="!blogForm.valid || isLoading"
           class="btn-submit"
         >
-          {{ isLoading ? 'Saving...' : (isEditMode ? 'Update Blog' : 'Publish Blog') }}
+          <span class="btn-icon">{{ isLoading ? '⏳' : (isEditMode ? '💾' : '🚀') }}</span>
+          <span class="btn-text">
+            {{ isLoading ? 'Saving...' : (isEditMode ? 'Update Story' : 'Publish Story') }}
+          </span>
         </button>
         
-        <a routerLink="/blogs" class="btn-cancel">Cancel</a>
+        <a routerLink="/dashboard" class="btn-cancel">
+          <span class="btn-icon">↩️</span>
+          <span class="btn-text">Cancel</span>
+        </a>
       </div>
     </form>
   </div>
